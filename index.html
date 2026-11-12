@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Planner – Personal Academic Task Management</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="logo">
+                <span class="logo-icon">📚</span>
+                Study Planner
+            </h1>
+            <nav class="nav">
+                <button class="nav-btn active" data-section="dashboard">Dashboard</button>
+                <button class="nav-btn" data-section="subjects">Subjects</button>
+                <button class="nav-btn" data-section="tasks">Tasks</button>
+                <button class="nav-btn" data-section="planner">Planner</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section active">
+            <div class="welcome-section">
+                <h2>Welcome to Your Study Planner</h2>
+                <p>Organize your subjects, track tasks, and stay on top of your deadlines.</p>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="total-subjects">0</span>
+                        <span class="stat-label">Total Subjects</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="total-tasks">0</span>
+                        <span class="stat-label">Total Tasks</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✔️</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="completed-tasks">0</span>
+                        <span class="stat-label">Completed</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏳</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="pending-tasks">0</span>
+                        <span class="stat-label">Pending</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Overall Progress -->
+            <div class="progress-section">
+                <h3>Overall Progress</h3>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="overall-progress-bar">
+                        <div class="progress-fill" id="overall-progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <span class="progress-percentage" id="overall-progress-percentage">0%</span>
+                </div>
+            </div>
+
+            <!-- Two Column Layout -->
+            <div class="dashboard-grid">
+                <!-- Upcoming Deadlines -->
+                <div class="dashboard-column">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Upcoming Deadlines</h3>
+                            <button class="btn btn-sm btn-primary" id="btn-add-task-quick">+ Add Task</button>
+                        </div>
+                        <div id="upcoming-deadlines-list" class="task-list-compact">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Today's Tasks -->
+                <div class="dashboard-column">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Today's Tasks</h3>
+                        </div>
+                        <div id="todays-tasks-list" class="task-list-compact">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subject Progress -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Subject-wise Progress</h3>
+                </div>
+                <div id="subject-progress-list" class="subject-progress-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="dashboard-empty" class="empty-state" style="display: none;">
+                <div class="empty-icon">📚</div>
+                <h3>No subjects yet</h3>
+                <p>Add your first subject to start organizing your studies.</p>
+                <button class="btn btn-primary" id="btn-add-subject-empty">+ Add Subject</button>
+            </div>
+
+            <!-- Demo Data Button -->
+            <div id="demo-data-section" class="demo-data-section" style="display: none;">
+                <button class="btn btn-secondary" id="btn-load-demo-data">Load Demo Data</button>
+            </div>
+        </section>
+
+        <!-- Subjects Section -->
+        <section id="subjects" class="section">
+            <div class="section-header">
+                <h2>Subjects</h2>
+                <button class="btn btn-primary" id="btn-add-subject">+ Add Subject</button>
+            </div>
+            <div id="subjects-list" class="subjects-grid">
+                <!-- Populated by JS -->
+            </div>
+            <div id="subjects-empty" class="empty-state" style="display: none;">
+                <div class="empty-icon">📚</div>
+                <h3>No subjects yet</h3>
+                <p>Add your first subject to start organizing your studies.</p>
+                <button class="btn btn-primary" id="btn-add-subject-empty-subjects">+ Add Subject</button>
+            </div>
+        </section>
+
+        <!-- Tasks Section -->
+        <section id="tasks" class="section">
+            <div class="section-header">
+                <h2>Tasks</h2>
+                <button class="btn btn-primary" id="btn-add-task">+ Add Task</button>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="filters-section">
+                <div class="search-box">
+                    <input type="text" id="task-search" placeholder="Search tasks..." aria-label="Search tasks">
+                </div>
+                <div class="filters-grid">
+                    <select id="filter-subject" aria-label="Filter by subject">
+                        <option value="">All Subjects</option>
+                    </select>
+                    <select id="filter-priority" aria-label="Filter by priority">
+                        <option value="">All Priorities</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                    <select id="filter-status" aria-label="Filter by status">
+                        <option value="">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                    <button class="btn btn-secondary" id="btn-clear-filters">Clear Filters</button>
+                </div>
+            </div>
+
+            <!-- Tasks List -->
+            <div id="tasks-list" class="tasks-list">
+                <!-- Populated by JS -->
+            </div>
+            <div id="tasks-empty" class="empty-state" style="display: none;">
+                <div class="empty-icon">✅</div>
+                <h3>No tasks found</h3>
+                <p>Try creating a task or changing your filters.</p>
+            </div>
+        </section>
+
+        <!-- Planner Section -->
+        <section id="planner" class="section">
+            <div class="section-header">
+                <h2>Planner</h2>
+            </div>
+
+            <!-- Today -->
+            <div class="planner-section">
+                <h3 class="planner-day-header">Today</h3>
+                <div id="planner-today" class="planner-day-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Upcoming -->
+            <div class="planner-section">
+                <h3 class="planner-day-header">Upcoming</h3>
+                <div id="planner-upcoming" class="planner-day-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Weekly View -->
+            <div class="planner-section">
+                <h3 class="planner-day-header">This Week</h3>
+                <div id="planner-weekly" class="planner-weekly-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div id="planner-empty" class="empty-state" style="display: none;">
+                <div class="empty-icon">📅</div>
+                <h3>No tasks scheduled</h3>
+                <p>Add tasks with deadlines to see them in your planner.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modals -->
+
+    <!-- Add/Edit Subject Modal -->
+    <div id="subject-modal" class="modal" aria-hidden="true">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="subject-modal-title">Add Subject</h3>
+                <button class="modal-close" aria-label="Close modal">&times;</button>
+            </div>
+            <form id="subject-form">
+                <input type="hidden" id="subject-id">
+                <div class="form-group">
+                    <label for="subject-name">Subject Name</label>
+                    <input type="text" id="subject-name" required placeholder="e.g., Data Structures">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary modal-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Subject</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Task Modal -->
+    <div id="task-modal" class="modal" aria-hidden="true">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="task-modal-title">Add Task</h3>
+                <button class="modal-close" aria-label="Close modal">&times;</button>
+            </div>
+            <form id="task-form">
+                <input type="hidden" id="task-id">
+                <div class="form-group">
+                    <label for="task-name">Task Name</label>
+                    <input type="text" id="task-name" required placeholder="e.g., Complete Unit 3 Notes">
+                </div>
+                <div class="form-group">
+                    <label for="task-subject">Subject</label>
+                    <select id="task-subject" required>
+                        <option value="">Select a subject</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="task-deadline">Deadline</label>
+                    <input type="date" id="task-deadline" required>
+                </div>
+                <div class="form-group">
+                    <label for="task-priority">Priority</label>
+                    <select id="task-priority" required>
+                        <option value="">Select priority</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="task-status">Status</label>
+                    <select id="task-status">
+                        <option value="Pending">Pending</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary modal-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal" aria-hidden="true">
+        <div class="modal-overlay"></div>
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 id="delete-modal-title">Delete Item?</h3>
+                <button class="modal-close" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="delete-modal-message">Are you sure you want to delete this item?</p>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary modal-cancel">Cancel</button>
+                <button type="button" class="btn btn-danger" id="btn-confirm-delete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/storage.js"></script>
+    <script src="js/subjects.js"></script>
+    <script src="js/tasks.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/planner.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
